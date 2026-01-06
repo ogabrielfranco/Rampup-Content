@@ -2,11 +2,13 @@
 import { GoogleGenAI } from "@google/genai";
 
 export const generateContent = async (prompt: string, methodologyTitle: string) => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+  // Inicialização obrigatória conforme as diretrizes da SDK
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      // Usando Gemini 3 Pro para raciocínio estratégico avançado
+      model: 'gemini-3-pro-preview',
       contents: prompt,
       config: {
         systemInstruction: `Você é um Estrategista de Conteúdo de Elite e Especialista em Marketing Digital com 20 anos de experiência, focado em crescimento viral e conversão.
@@ -19,11 +21,12 @@ Diretrizes de Resposta:
 3. Seja prático e direto: evite introduções longas. Vá direto ao conteúdo que o usuário pode copiar e colar.
 4. Mantenha um tom profissional, porém persuasivo e disruptivo.
 5. Se a metodologia envolver roteiros, especifique visual, áudio e texto na tela.`,
-        temperature: 1,
+        temperature: 0.8,
         topP: 0.95,
       },
     });
 
+    // Acessando a propriedade .text diretamente como solicitado pela SDK
     return response.text;
   } catch (error) {
     console.error("Gemini Generation Error:", error);

@@ -23,7 +23,6 @@ const App: React.FC = () => {
   const [loadingMessage, setLoadingMessage] = useState("");
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
   useEffect(() => {
     let interval: any;
@@ -54,7 +53,7 @@ const App: React.FC = () => {
     
     setTimeout(() => {
       document.getElementById('form-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+    }, 150);
   };
 
   const handlePromptSelect = (prompt: MethodologyPrompt) => {
@@ -89,9 +88,9 @@ const App: React.FC = () => {
       
       setTimeout(() => {
         document.getElementById('result-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 300);
+      }, 400);
     } catch (err: any) {
-      setError("Erro na geração. Tente novamente.");
+      setError("Houve um erro na geração via IA. Verifique sua chave de API nas configurações do Vercel.");
     } finally {
       setLoading(false);
     }
@@ -104,28 +103,29 @@ const App: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `estrategia-${Date.now()}.${format}`;
+    a.download = `content-strategy-${Date.now()}.${format}`;
     a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
     <div className="min-h-screen bg-[#06060c] text-slate-200 pb-20 selection:bg-indigo-500/40 font-inter">
-      {/* Dynamic Background */}
-      <div className="fixed inset-0 pointer-events-none -z-10">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/10 blur-[120px] rounded-full"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/10 blur-[120px] rounded-full"></div>
+      {/* Background Decorativo Estático para Performance */}
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div className="absolute top-[-10%] left-[20%] w-[500px] h-[500px] bg-indigo-600/10 blur-[150px] rounded-full"></div>
+        <div className="absolute bottom-[-10%] right-[20%] w-[500px] h-[500px] bg-purple-600/10 blur-[150px] rounded-full"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
         <header className="mb-16 md:mb-24 text-center animate-in fade-in duration-1000">
           <span className="inline-block px-4 py-1.5 mb-6 rounded-full bg-white/5 border border-white/10 text-indigo-400 text-[10px] font-black uppercase tracking-[0.4em] backdrop-blur-sm">
-            Intelligence Engine 3.0
+            Vercel Ready Deployment
           </span>
           <h1 className="text-5xl md:text-8xl font-black mb-6 tracking-tighter leading-[0.9]">
             SuperApp <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-500 bg-clip-text text-transparent">Content</span>
           </h1>
           <p className="text-slate-500 text-base md:text-xl max-w-2xl mx-auto font-light leading-relaxed">
-            Domine as metodologias do 1% e transforme sua presença digital em uma máquina de escala e autoridade.
+            A infraestrutura definitiva para estrategistas que não aceitam o mediano. 
           </p>
         </header>
 
@@ -133,10 +133,10 @@ const App: React.FC = () => {
         <section className="mb-20">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 px-2">
             <div className="space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-500/80">Passo 01</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-500/80">01. Seleção DNA</span>
               <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white">Eixo Metodológico</h2>
             </div>
-            <p className="text-slate-500 text-xs md:text-sm font-medium">Selecione o DNA da sua próxima estratégia.</p>
+            <p className="text-slate-500 text-xs md:text-sm font-medium">Escolha sua linha tática de atuação.</p>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
@@ -153,7 +153,7 @@ const App: React.FC = () => {
 
         {/* Form Section */}
         {selectedMethod && (
-          <div id="form-section" className="scroll-mt-8">
+          <div id="form-section" className="scroll-mt-12">
             <div className="bg-slate-900/40 border border-slate-800/60 rounded-[2.5rem] md:rounded-[4rem] p-6 md:p-12 mb-16 backdrop-blur-2xl animate-in slide-in-from-bottom-8 duration-700 shadow-2xl">
               
               {/* Resumo da Metodologia */}
@@ -215,6 +215,12 @@ const App: React.FC = () => {
                           </div>
                         </div>
                       </div>
+
+                      {error && (
+                        <div className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm">
+                          {error}
+                        </div>
+                      )}
 
                       <form onSubmit={handleSubmit} className="space-y-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -286,7 +292,7 @@ const App: React.FC = () => {
                       <div className="w-16 h-16 bg-slate-800/40 rounded-full flex items-center justify-center mb-4">
                         <svg className="w-8 h-8 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                       </div>
-                      <p className="text-sm font-medium max-w-xs mx-auto">Selecione uma variável tática na lateral para detalhar sua estratégia</p>
+                      <p className="text-sm font-medium max-w-xs mx-auto">Escolha uma variável tática ao lado para iniciar a construção.</p>
                     </div>
                   )}
                 </div>
@@ -297,7 +303,7 @@ const App: React.FC = () => {
 
         {/* Result Display */}
         {result && (
-          <section id="result-section" className="scroll-mt-8 pb-20">
+          <section id="result-section" className="scroll-mt-12 pb-20">
             <ResultDisplay 
               content={result} 
               onExport={exportResult} 
