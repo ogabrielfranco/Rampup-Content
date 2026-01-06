@@ -92,7 +92,7 @@ const App: React.FC = () => {
         document.getElementById('result-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 400);
     } catch (err: any) {
-      setError(err.message || "Houve um erro na geração via IA. Verifique sua chave de API nas configurações do Vercel.");
+      setError(err.message || "Houve um erro na geração via IA.");
     } finally {
       setLoading(false);
     }
@@ -120,7 +120,7 @@ const App: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
         <header className="mb-16 md:mb-24 text-center">
           <span className="inline-block px-4 py-1.5 mb-6 rounded-full bg-white/5 border border-white/10 text-indigo-400 text-[10px] font-black uppercase tracking-[0.4em] backdrop-blur-sm">
-            Vercel Ready Deployment
+            Content Engine Active
           </span>
           <h1 className="text-5xl md:text-8xl font-black mb-6 tracking-tighter leading-[0.9]">
             SuperApp <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-500 bg-clip-text text-transparent">Content</span>
@@ -212,8 +212,9 @@ const App: React.FC = () => {
                       </div>
 
                       {error && (
-                        <div className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm">
-                          {error}
+                        <div className="mb-8 p-6 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm flex items-start gap-4">
+                          <svg className="w-6 h-6 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                          <p>{error}</p>
                         </div>
                       )}
 

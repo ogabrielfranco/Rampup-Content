@@ -13,7 +13,8 @@ export const generateContent = async (prompt: string, methodologyTitle: string) 
   
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      // Trocado para flash-preview: mais rápido e com limites de cota muito maiores
+      model: 'gemini-3-flash-preview',
       contents: prompt,
       config: {
         systemInstruction: `Você é um Estrategista de Conteúdo de Elite e Especialista em Marketing Digital com 20 anos de experiência, focado em crescimento viral e conversão.
@@ -38,6 +39,12 @@ Diretrizes de Resposta:
     return response.text;
   } catch (error: any) {
     console.error("Gemini Generation Error:", error);
+    
+    // Tratamento específico para erro de cota (429)
+    if (error.message?.includes('429') || error.message?.includes('quota')) {
+      throw new Error("Limite de uso atingido (Cota do Google). Por favor, aguarde cerca de 60 segundos antes de tentar novamente ou use uma chave de API com plano pago.");
+    }
+    
     throw new Error(error.message || "Erro na geração de conteúdo.");
   }
 };
