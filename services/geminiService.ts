@@ -2,12 +2,17 @@
 import { GoogleGenAI } from "@google/genai";
 
 export const generateContent = async (prompt: string, methodologyTitle: string) => {
-  // Inicialização obrigatória conforme as diretrizes da SDK
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  // O Vite substituirá process.env.API_KEY pelo valor da variável de ambiente definida na Vercel
+  const apiKey = process.env.API_KEY;
+  
+  if (!apiKey) {
+    throw new Error("API_KEY não configurada nas variáveis de ambiente.");
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
   
   try {
     const response = await ai.models.generateContent({
-      // Usando Gemini 3 Pro para raciocínio estratégico avançado
       model: 'gemini-3-pro-preview',
       contents: prompt,
       config: {
@@ -26,7 +31,6 @@ Diretrizes de Resposta:
       },
     });
 
-    // Acessando a propriedade .text diretamente como solicitado pela SDK
     return response.text;
   } catch (error) {
     console.error("Gemini Generation Error:", error);
