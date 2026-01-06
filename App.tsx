@@ -25,7 +25,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let interval: any;
+    let interval: ReturnType<typeof setInterval> | undefined;
     if (loading) {
       setLoadingMessage(REASSURING_MESSAGES[0]);
       let i = 0;
@@ -34,7 +34,9 @@ const App: React.FC = () => {
         setLoadingMessage(REASSURING_MESSAGES[i]);
       }, 2500);
     }
-    return () => clearInterval(interval);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [loading]);
 
   const handleMethodSelect = (method: Methodology) => {
@@ -90,7 +92,7 @@ const App: React.FC = () => {
         document.getElementById('result-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 400);
     } catch (err: any) {
-      setError("Houve um erro na geração via IA. Verifique sua chave de API nas configurações do Vercel.");
+      setError(err.message || "Houve um erro na geração via IA. Verifique sua chave de API nas configurações do Vercel.");
     } finally {
       setLoading(false);
     }
@@ -110,14 +112,13 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#06060c] text-slate-200 pb-20 selection:bg-indigo-500/40 font-inter">
-      {/* Background Decorativo Estático para Performance */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
         <div className="absolute top-[-10%] left-[20%] w-[500px] h-[500px] bg-indigo-600/10 blur-[150px] rounded-full"></div>
         <div className="absolute bottom-[-10%] right-[20%] w-[500px] h-[500px] bg-purple-600/10 blur-[150px] rounded-full"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
-        <header className="mb-16 md:mb-24 text-center animate-in fade-in duration-1000">
+        <header className="mb-16 md:mb-24 text-center">
           <span className="inline-block px-4 py-1.5 mb-6 rounded-full bg-white/5 border border-white/10 text-indigo-400 text-[10px] font-black uppercase tracking-[0.4em] backdrop-blur-sm">
             Vercel Ready Deployment
           </span>
@@ -129,7 +130,6 @@ const App: React.FC = () => {
           </p>
         </header>
 
-        {/* Eixo Metodológico */}
         <section className="mb-20">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 px-2">
             <div className="space-y-1">
@@ -151,13 +151,10 @@ const App: React.FC = () => {
           </div>
         </section>
 
-        {/* Form Section */}
         {selectedMethod && (
           <div id="form-section" className="scroll-mt-12">
-            <div className="bg-slate-900/40 border border-slate-800/60 rounded-[2.5rem] md:rounded-[4rem] p-6 md:p-12 mb-16 backdrop-blur-2xl animate-in slide-in-from-bottom-8 duration-700 shadow-2xl">
-              
-              {/* Resumo da Metodologia */}
-              <div className="mb-12 p-6 md:p-8 bg-indigo-500/5 border border-indigo-500/10 rounded-3xl animate-in fade-in duration-1000">
+            <div className="bg-slate-900/40 border border-slate-800/60 rounded-[2.5rem] md:rounded-[4rem] p-6 md:p-12 mb-16 backdrop-blur-2xl shadow-2xl">
+              <div className="mb-12 p-6 md:p-8 bg-indigo-500/5 border border-indigo-500/10 rounded-3xl">
                 <div className="flex flex-col md:flex-row gap-6 items-start">
                   <div className="w-14 h-14 shrink-0 flex items-center justify-center rounded-2xl bg-indigo-500/20 text-2xl border border-indigo-500/20">
                     {selectedMethod.icon}
@@ -175,7 +172,6 @@ const App: React.FC = () => {
               </div>
 
               <div className="flex flex-col lg:flex-row gap-12">
-                {/* Sidebar - Sub-Metodologias */}
                 {selectedMethod.isSubPromptSystem && (
                   <div className="lg:w-1/3">
                     <div className="flex items-center gap-2 mb-6 px-2">
@@ -199,10 +195,9 @@ const App: React.FC = () => {
                   </div>
                 )}
 
-                {/* Form Area */}
                 <div className="flex-1">
                   {selectedPrompt ? (
-                    <div className="animate-in fade-in duration-700">
+                    <div>
                       <div className="flex items-center gap-6 mb-12">
                         <div className="w-12 h-12 flex items-center justify-center rounded-[1rem] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-2xl">
                           {selectedMethod.icon}
@@ -233,16 +228,6 @@ const App: React.FC = () => {
                                   <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
                                     {guide?.label || field}
                                   </label>
-                                  {guide && (
-                                    <div className="relative group/tooltip">
-                                      <button type="button" className="text-slate-600 hover:text-indigo-400 transition-colors">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                      </button>
-                                      <div className="absolute bottom-full right-0 mb-2 w-64 p-4 bg-slate-800 border border-slate-700 rounded-2xl text-[11px] text-slate-300 leading-relaxed shadow-2xl opacity-0 translate-y-2 pointer-events-none group-hover/tooltip:opacity-100 group-hover/tooltip:translate-y-0 transition-all z-50">
-                                        {guide.explanation}
-                                      </div>
-                                    </div>
-                                  )}
                                 </div>
                                 {isLarge ? (
                                   <textarea
@@ -301,7 +286,6 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* Result Display */}
         {result && (
           <section id="result-section" className="scroll-mt-12 pb-20">
             <ResultDisplay 
@@ -316,8 +300,6 @@ const App: React.FC = () => {
       <style>{`
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-        .animate-in { animation: fade-in 0.8s ease-out; }
       `}</style>
     </div>
   );
