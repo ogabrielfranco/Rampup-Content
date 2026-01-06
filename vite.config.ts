@@ -5,7 +5,11 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   define: {
-    // Injeta variáveis de ambiente para serem acessíveis via process.env
-    'process.env': process.env
+    // Injeta especificamente a API_KEY para o cliente, respeitando a regra do process.env.API_KEY
+    'process.env.API_KEY': JSON.stringify(process.env.API_KEY)
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: false
   }
 });

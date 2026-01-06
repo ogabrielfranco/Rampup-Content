@@ -2,11 +2,11 @@
 import { GoogleGenAI } from "@google/genai";
 
 export const generateContent = async (prompt: string, methodologyTitle: string) => {
-  // O Vite substituirá process.env.API_KEY pelo valor da variável de ambiente definida na Vercel
+  // O valor de process.env.API_KEY será injetado pelo Vite via comando 'define' no config
   const apiKey = process.env.API_KEY;
   
   if (!apiKey) {
-    throw new Error("API_KEY não configurada nas variáveis de ambiente.");
+    throw new Error("A chave de API (API_KEY) não foi encontrada. Certifique-se de configurá-la nas Environment Variables da Vercel.");
   }
 
   const ai = new GoogleGenAI({ apiKey });
@@ -31,9 +31,13 @@ Diretrizes de Resposta:
       },
     });
 
+    if (!response.text) {
+      throw new Error("A IA retornou uma resposta vazia.");
+    }
+
     return response.text;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Gemini Generation Error:", error);
-    throw error;
+    throw new Error(error.message || "Erro na geração de conteúdo.");
   }
 };
